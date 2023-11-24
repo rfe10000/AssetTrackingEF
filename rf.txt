@@ -1,0 +1,74 @@
+
+    (*Delete your database from within SQL Server Object Explorer)
+
+    *Delete all your existing migrations from within the Migrations folder.
+
+    *In Package-Management-Console type "Add-Migration InitialCreate"
+    [optional, depending on your database initializer]
+
+    *In Package-Management-Console type "update-database"   //If the database doesn't exist, Update-Database will create it automatically and apply each migration. 
+
+
+
+https://stackoverflow.com/questions/36062053/save-list-to-database-entity-framework
+
+https://learn.microsoft.com/en-us/ef/core/querying/
+ https://learn.microsoft.com/en-us/ef/core/querying/complex-query-operators
+ https://learn.microsoft.com/en-us/ef/core/modeling/entity-types?tabs=data-annotations#shared-type-entity-types
+
+https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/expression-trees-building?source=recommendations
+
+https://stackoverflow.com/questions/12553435/how-to-draw-chart-based-on-datatable-from-console-application
+	System.Windows.Forms.DataVisualization.Charting.Chart
+
+- - - - - - - - - - - - - - - 
+https://www.mitchelsellers.com/blog/article/using-predicatebuilder-with-ef-core-for-complex-queries
+  PredicateBuilder 
+    context.Products.Where(p.Cost > 150 || (p.Cost > 75 && p.IsFeatured);
+
+public List SearchProducts(SearchFilter mySearchFilter)
+{
+    var result = _context.Products.AsNoTracking();
+
+    if(mySearchFilter.IsActive)
+        result = result.Where(p => p.ActiveOnly);
+
+    if(mySearchFilter.CategoryIds != null && mySearchFilter.CategoryIds.Any())
+        result = result.Where(p => mySearchFilter.CategoryIds.Contains(p.CategoryId));
+
+    return result.ToList();
+} 
+
+- - - - - - - - - - - - - - - 
+
+// Type: System.Linq.Enumerable
+// Assembly: System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+// Assembly location: C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Core.dll
+public static class Enumerable
+{
+    public static IEnumerable<TSource> Where<TSource>(
+        this IEnumerable<TSource> source, 
+        Func<TSource, bool> predicate)
+    {
+        return (IEnumerable<TSource>) new Enumerable.WhereEnumerableIterator<TSource>(source, predicate);
+    }
+}
+
+
+// Type: System.Linq.Queryable
+// Assembly: System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+// Assembly location: C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Core.dll
+public static class Queryable
+{
+    public static IQueryable<TSource> Where<TSource>(
+        this IQueryable<TSource> source, 
+        Expression<Func<TSource, bool>> predicate)
+    {
+        return source.Provider.CreateQuery<TSource>(
+            Expression.Call(
+                null, 
+                ((MethodInfo) MethodBase.GetCurrentMethod()).MakeGenericMethod(
+                    new Type[] { typeof(TSource) }), 
+                    new Expression[] { source.Expression, Expression.Quote(predicate) }));
+    }
+}
