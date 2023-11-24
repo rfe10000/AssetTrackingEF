@@ -162,7 +162,7 @@ static void HandleInput(string mnu, out bool isBreak, ref string quitOption, ref
     do
     {
         PrintColoredMessage($"{mnu} {quitOption}: ", ConsoleColor.Cyan, true); 
-        PrintColoredMessage(mnHlp.Menu);
+        PrintColoredMessage(mnHlp.Menu!);
 
         string read = (Console.ReadLine() ?? string.Empty).Trim();
         if (read == "q")
@@ -178,7 +178,7 @@ static void HandleInput(string mnu, out bool isBreak, ref string quitOption, ref
         }
         else if (int.TryParse(read, out int value))
         {
-            if (mnHlp.Identifiers.Contains(value))
+            if (mnHlp.Identifiers!.Contains(value))
             {
                 id = value;
                 quitOption = string.Empty;
@@ -281,7 +281,7 @@ static bool HandleAssetInput()
         asset.Price = assetTpl.Price;
         asset.PurchaseDate = assetTpl.PurchaseDate;
 
-        context.Asset.Add(asset);
+        context.Asset!.Add(asset);
         context.SaveChanges();
 
         assetTpl = (TypeId: -1, BrandId: -1, ModelId: -1, OfficeId: -1, Price: double.NaN, PurchaseDate: default(DateTime));
@@ -312,7 +312,7 @@ static bool UpdateOrRemoveAsset(bool update)
     {
         int index = assetTpls[selectedIndex - 1].Item1;
 
-        Asset? assetRemoveOrUpdate = context.Asset.FirstOrDefault(x => x.Id == index);
+        Asset? assetRemoveOrUpdate = context.Asset!.FirstOrDefault(x => x.Id == index);
 
         if (assetRemoveOrUpdate == null)
             return false;
@@ -327,7 +327,7 @@ static bool UpdateOrRemoveAsset(bool update)
             if (!isBreak)
             {
                 assetRemoveOrUpdate.OfficeId = oId;
-                context.Asset.Update(assetRemoveOrUpdate);
+                context.Asset!.Update(assetRemoveOrUpdate);
                 context.SaveChanges();
             }
             else
@@ -335,7 +335,7 @@ static bool UpdateOrRemoveAsset(bool update)
         }
         else 
         {
-            context.Asset.Remove(assetRemoveOrUpdate);
+            context.Asset!.Remove(assetRemoveOrUpdate);
             context.SaveChanges();
         }
     }

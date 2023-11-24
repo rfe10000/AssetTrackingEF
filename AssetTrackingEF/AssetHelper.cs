@@ -10,8 +10,8 @@ namespace AssetTrackingEF.AssetHelper
 {
     internal class AssetChoiceMenu
     {
-        public string Menu {  get; set; }
-        public List<int> Identifiers { get; set; }
+        public string? Menu {  get; set; }
+        public List<int>? Identifiers { get; set; }
     }
 }
 
