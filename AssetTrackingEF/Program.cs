@@ -15,7 +15,12 @@ using AssetTrackingEF.AssetHelper;
 using AssetTrackingEF.Utility;
 using System.Collections;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.EntityFrameworkCore;
 
+
+//ReportOfficeTotals();
+//ReportOfficeInventory(3);
+//goto slut;
 
 PrintColoredMessage("Welcome to asset tracking app", ConsoleColor.Gray);
 
@@ -36,7 +41,7 @@ while (true)
             Console.Write(Environment.NewLine);
         }        
     }
-    else if (choice == "r")
+    else if (choice == "d")
     {
         if (UpdateOrRemoveAsset(false))
             PrintColoredMessage("The asset was successfully deleted!", ConsoleColor.Green);
@@ -50,12 +55,31 @@ while (true)
 
         Console.Write(Environment.NewLine);
     }
+    else if (choice == "r")
+    {
+        PrintColoredMessage("Select report type (number): ", ConsoleColor.Cyan, true);
+        PrintColoredMessage("1. Group summary   2. Office inventory");
+        string read = (Console.ReadLine() ?? string.Empty).Trim();
+        if (read == "1")
+            ReportOfficeTotals();
+        else if (read == "2")
+        {
+            int id = -1;
+            string s = string.Empty;
+            HandleInput("Select an office from the list (number)", out bool isBreak, ref s, ref id, GetOfficeMenue());
+            if (id > -1)
+                ReportOfficeInventory(id);
+        }
+
+        Console.Write(Environment.NewLine);
+    }
     else if (choice == "s")
     {
         PrintAssets();
     }
 }
 
+//slut:
 static MenuHelper GetModelMenue(int typeId, int brandID)
 {
     var selectModel = (from brand in context.Set<AssetBrand>()
@@ -343,6 +367,59 @@ static bool UpdateOrRemoveAsset(bool update)
         return false;
 
     return true;
+}
+
+/*
+ * The Report methods using FromSqlRaw
+ */
+static void ReportOfficeInventory(int oid)
+{
+    //Adding price total in the database
+    var query = context.ReportOffice!.FromSqlRaw($@"
+                        SELECT o.Country AS Office, t.Type, m.Model, b.Brand, a.Price, Total FROM Asset a
+	                    INNER JOIN Model m ON a.AssetModelId = m.Id INNER JOIN Office o ON a.OfficeId = o.Id AND a.OfficeId = {oid}
+	                    INNER JOIN Type t ON m.AssetTypeID = t.ID INNER JOIN Brand b ON b.ID = m.AssetBrandID
+	                    INNER JOIN 
+	                    (
+		                    SELECT OfficeId, SUM(Price) AS Total FROM Asset GROUP BY OfficeId
+	                    ) AS OfficeTotal
+	                    ON a.OfficeId = OfficeTotal.OfficeId").ToList();
+
+    //To handle if index out of bounds in query[0]
+    try
+    {
+
+        PrintColoredMessage($"  Summary over the office {query[0].Office} inventories", ConsoleColor.Cyan);
+        PrintColoredMessage("  ---------------------------------------------------");
+        PrintColoredMessage($"{" ".PadRight(4)}{"Type".PadRight(16)}{"Brand".PadRight(16)}{"Model".PadRight(18)}Price", ConsoleColor.DarkYellow);
+
+        query.ForEach(report => PrintColoredMessage($"{" ".PadLeft(4)}{report.Type!.PadRight(16)}{report.Brand!.PadRight(16)}{report.Model!.PadRight(18)}{report.Price,10:f2}"));
+
+        PrintColoredMessage($"{" ".PadRight(48)}----------------");
+        PrintColoredMessage($"{" ".PadRight(49)}Total:", ConsoleColor.Green, true);
+        PrintColoredMessage($"{" ".PadRight(2)}{query[0].Total,-12:f2}", ConsoleColor.Gray);
+    }
+    catch (Exception ex) 
+    { 
+        PrintColoredMessage("Somthing went wrong", ConsoleColor.Red); 
+    }
+}
+static void ReportOfficeTotals()
+{
+    var query = context.ReportGroup!.FromSqlRaw(@"
+                        SELECT Office.Country AS Office, SUM(Price) AS Total FROM Asset 
+                        INNER JOIN Office ON Asset.OfficeId = Office.Id GROUP BY Office.Country").ToList();
+
+    PrintColoredMessage("  Summary for the groups inventory", ConsoleColor.Cyan);
+    PrintColoredMessage("  ----------------------------------");
+    PrintColoredMessage($"{" ".PadRight(4)}Office{" ".PadRight(34)}Amount", ConsoleColor.DarkYellow);
+
+    query.ForEach(report => { PrintColoredMessage($"{" ".PadRight(4)}{report.Office!.PadRight(40)}{report.Total,-12:f2}"); 
+        PrintColoredMessage($"{" ".PadRight(38)}-------------");
+    });
+
+    PrintColoredMessage($"{ " ".PadRight(35)}Total:", ConsoleColor.Green, true); 
+    PrintColoredMessage($"{" ".PadRight(2)}{query.Sum(x => x.Total),-12:f2}", ConsoleColor.Gray);
 }
 static void PrintAssets()
 {

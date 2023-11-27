@@ -25,7 +25,7 @@ public partial class Program
 
     static readonly string tblHeader = GetTableHeader(string.Empty);
 
-    const string menue = "Add asset - enter \"A\" | Show assets - enter \"S\" | Change or Remove assets - enter \"C\" or \"R\" | Quit - enter \"Q\"";
+    const string menue = "Add asset - \"A\" | Show - enter \"S\" | Change or Delete - enter \"C\" or \"D\" | Reports - \"R\" | Quit - enter \"Q\"";
     const string menueUpdateRemove = "Select asset from list (Nr): ";
 
     private static string GetTableHeader(string pad)

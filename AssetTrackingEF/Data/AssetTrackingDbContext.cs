@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AssertTrackingEF.Data;
 using AssertTrackingEF.Data.EF;
+using AssetTrackingEF.Data;
 using AssetTrackingEF.Data.EF;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,12 +18,13 @@ namespace AssertTrackingEF.Data
         string connectionString = @"Data Source=DESKTOP-U83N4J9\MSSQLSERVER2022;Initial Catalog=AssetTracking;
                                           Integrated Security=True";
 
-
         public DbSet<AssetBrand>? Brand { get; set; }
         public DbSet<AssetType>? Type { get; set; }
         public new DbSet<AssetModel>? Model { get; set; }
         public DbSet<Office>? Office { get; set; }
         public DbSet<Asset>? Asset { get; set; }
+        public DbSet<ReportGroupTotal>? ReportGroup {  get; set; }
+        public DbSet<ReportOffice>? ReportOffice { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,6 +34,11 @@ namespace AssertTrackingEF.Data
 
         protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
+            //No tale needs to be created for reprting purposes
+            ModelBuilder.Entity<ReportGroupTotal>().ToTable("ReportGroup", t => t.ExcludeFromMigrations());
+            ModelBuilder.Entity<ReportOffice>().ToTable("ReportOffice", t => t.ExcludeFromMigrations());
+
+
             ModelBuilder.Entity<AssetBrand>().HasData(new AssetBrand { Id = 1, Brand = "HP" });
             ModelBuilder.Entity<AssetBrand>().HasData(new AssetBrand { Id = 2, Brand = "Apple" });
             ModelBuilder.Entity<AssetBrand>().HasData(new AssetBrand { Id = 3, Brand = "Lenovo" });
