@@ -18,10 +18,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.EntityFrameworkCore;
 
 
-//ReportOfficeTotals();
-//ReportOfficeInventory(3);
-//goto slut;
-
 PrintColoredMessage("Welcome to asset tracking app", ConsoleColor.Gray);
 
 while (true)
@@ -79,7 +75,9 @@ while (true)
     }
 }
 
-//slut:
+/*
+ * Methods close to the main while loop is currently kept in the same file 
+ */
 static MenuHelper GetModelMenue(int typeId, int brandID)
 {
     var selectModel = (from brand in context.Set<AssetBrand>()
