@@ -383,7 +383,7 @@ static void ReportOfficeInventory(int oid)
 	                    ) AS OfficeTotal
 	                    ON a.OfficeId = OfficeTotal.OfficeId").ToList();
 
-    //To handle if index out of bounds in query[0]
+    //To handle index out of bounds in query[0]
     try
     {
 
