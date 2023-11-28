@@ -66,6 +66,9 @@ while (true)
             if (id > -1)
                 ReportOfficeInventory(id);
         }
+        //If not a valid choice do nothing
+        //else
+        //    PrintColoredMessage("Not a valid choice", ConsoleColor.Red);
 
         Console.Write(Environment.NewLine);
     }
@@ -208,7 +211,8 @@ static void HandleInput(string mnu, out bool isBreak, ref string quitOption, ref
             }
             else
             {
-                PrintColoredMessage("Not a valid choice", ConsoleColor.Red);
+                //if not a valid choice do nothing
+                //PrintColoredMessage("Not a valid choice", ConsoleColor.Red);
                 quitOption = ", or quit \"q\"";
                 continue;
             }
@@ -383,7 +387,7 @@ static void ReportOfficeInventory(int oid)
 	                    ) AS OfficeTotal
 	                    ON a.OfficeId = OfficeTotal.OfficeId").ToList();
 
-    //To handle index out of bounds in query[0]
+    //To handle possible index out of bounds in query[0]
     try
     {
 
