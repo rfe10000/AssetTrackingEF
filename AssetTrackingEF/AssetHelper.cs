@@ -75,7 +75,7 @@ namespace AssetTrackingEF.AssetHelper
             catch //(HttpRequestException e)
             {
                 //The app will load with diffrent data
-                return null;                
+                return null!;                
             }
             return currForApp;
         }

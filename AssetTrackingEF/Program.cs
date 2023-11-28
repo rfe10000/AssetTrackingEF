@@ -401,7 +401,7 @@ static void ReportOfficeInventory(int oid)
         PrintColoredMessage($"{" ".PadRight(49)}Total:", ConsoleColor.Green, true);
         PrintColoredMessage($"{" ".PadRight(2)}{query[0].Total,-12:f2}", ConsoleColor.Gray);
     }
-    catch (Exception ex) 
+    catch //(Exception ex) 
     { 
         PrintColoredMessage("Somthing went wrong", ConsoleColor.Red); 
     }
