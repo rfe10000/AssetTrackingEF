@@ -14,19 +14,18 @@ public partial class Program
     
     static AssetTrackingDbContext context = new AssetTrackingDbContext();
     
-    //static Dictionary<string, double?> currencyFromUSD = new Dictionary<string, double?>()
-    //{
-    //    { "USD", 1 },
-    //    { "EUR", 0.9782323 },
-    //    { "SEK", 11.2342323 },
-    //    { "GBP", 0.82291064 },
-    //    { "CHF", 0.91649692 }
-    //};
-
     //Gets the current value of the currencies from internet
     //TODO: Get office currencies from database.
     static Dictionary<string, double?> currencyFromUSD = 
-        JsonCurrencyParser.GetCurrenciesFromJson(new List<string>() { "USD", "EUR", "SEK", "GBP", "CHF" });
+        JsonCurrencyParser.GetCurrenciesFromJson(new List<string>() { "USD", "EUR", "SEK", "GBP", "CHF" }) ??
+        new Dictionary<string, double?>()
+        {
+            { "USD", 1 },
+            { "EUR", 0.9782323 },
+            { "SEK", 11.2342323 },
+            { "GBP", 0.82291064 },
+            { "CHF", 0.91649692 }
+        };
 
     static readonly string tblHeader = GetTableHeader(string.Empty);
 
